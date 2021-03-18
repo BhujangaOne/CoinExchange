@@ -52,6 +52,29 @@ class App extends React.Component {
         }
       ]
     }
+    this.handleRefresh = this.handleRefresh.bind(this);
+  }
+
+  handleRefresh(valueChangeTicker) {
+    const newCoinData = this.state.coinData.map(function ( {ticker, name, price}) {  //input argument is 1 object {} with a ticker, name and price
+      let newPrice = price; //Why do we set newPrice to anything at all? We are changing it anyway inside the if statement?? AH! because it is possible that the if statement does not apply, in this case we return the newPrice as well but without change
+    if(valueChangeTicker === ticker) {
+      const randomPercentage = 0.995 + Math.random() * 0.01;
+    newPrice =  newPrice * randomPercentage;
+    
+        
+      }
+      return {
+        ticker: ticker,  //when key matches value, we could also shorthand it and write ticker only. 
+        name: name,
+        price: newPrice
+      }
+
+    });
+    
+    //  SetStatefunction could look like this too: this.setState( oldState => {/*inputnewstatehere*/})
+    //but this is also possible, if we use a part of a state only
+    this.setState({coinData: newCoinData});
   }
 
   render(){
@@ -60,7 +83,7 @@ class App extends React.Component {
       <Div>
         <ExchangeHeader />
         <h2><AccountsBalance amount={this.state.balance} /></h2>
-        <Coinlist coinData = {this.state.coinData} />
+        <Coinlist coinData = {this.state.coinData} handleRefresh={this.handleRefresh} />
       </Div>
     );
 
