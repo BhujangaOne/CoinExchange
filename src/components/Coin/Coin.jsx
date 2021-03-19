@@ -8,30 +8,22 @@ const TD = styled.td` {
 }`;
 
 export default class Coin extends Component {
-   
-    constructor(props){
-        super(props);
-        this.handleClick = this.handleClick.bind(this);    
-    }
-        handleClick(event) {
+    
+        handleClick = (event) => {
             //Prevent default action of submitting the form
             event.preventDefault();
             //when call (f.e. by button) Passes this.props.ticker to the handleRefresh function in App.js. App.js is inheriting Coinlist.jsx which is inheriting Coin.jsx
             this.props.handleRefresh(this.props.ticker);
     }
-    
-  
- /*   
-    
-*/
 
-   
     render() {
+        const balance = this.props.showBalance ? <TD>{this.props.balance}</TD> : null;
         return (
             <tr>
                 <TD>{this.props.name}</TD>
                 <TD>{this.props.ticker}</TD>
                 <TD>${this.props.price}</TD>
+                {balance}
                 <TD>
                     <form action="#" method="POST">
                         <button onClick={this.handleClick}>Refresh</button>
