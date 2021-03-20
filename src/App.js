@@ -6,6 +6,7 @@ import AccountsBalance from './components/AccountsBalance/AccountsBalance';
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 
 import styled from 'styled-components';
+import axios from 'axios';
 
 const Div = styled.div`
 text-align: center;
@@ -13,11 +14,13 @@ background-color: rgba(11, 11, 114, 0.938);
 color: #cccccc
 `;
 
+const coinCount = 9;
+
 class App extends React.Component {
   state = {
     balance: 10000,
     showBalance: true,
-    coinData: [
+    coinData: [ /*
       {
         key: uuidv4(),
         name: "Bitcoin",
@@ -52,9 +55,30 @@ class App extends React.Component {
         ticker: "BCH",
         balance: 0,
         price: 435.45
-      }
+      } */
     ]
   }
+  componentDidMount = async () => {
+  const response = await axios.get('https://api.coinpaprika.com/v1/coins');
+
+  const coinIds = response.data.slice(0, coinCount).map(coin => coin.id); 
+  const tickerURL = 'https://api.coinpaprika.com/v1/tickers/';
+  const promises = coinIds.map((id) => axios.get(tickerURL + id));
+  const coinData = await Promise.all(promises);
+  const coinPriceData = coinData.map(function(response) {
+    const coin = response.data;
+    return {
+      key: coin.id,
+      name: coin.name,
+      ticker: coin.symbol,
+      balance: 0,
+      price: parseFloat(Number(coin.quotes.USD.price).toFixed(4)),
+    }
+  })
+  //Retrieve prices here
+  this.setState({ coinData: coinPriceData });
+  }
+
 
   handleShowHide = () => {
     this.setState(function (oldState) {
